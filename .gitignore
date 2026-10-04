@@ -1,0 +1,43 @@
+# Бинарные файлы
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Результаты сборки
+/bin/
+/build/
+/dist/
+.go/
+.gocache/
+
+# Агенты
+.cursor/
+.cursorignore
+claude
+
+# Тестовые бинарники
+*.test
+
+# Профили и покрытие
+*.out
+coverage.*
+
+# Локальные конфиги
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+
+# ОС
+.DS_Store
+Thumbs.db
+
+# exe
+/monitor
+/notification
+/gateway
