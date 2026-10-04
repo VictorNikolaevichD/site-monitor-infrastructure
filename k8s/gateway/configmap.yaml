@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway
+  namespace: site-monitor
+  labels:
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: site-monitor
+data:
+  gateway.yaml: |
+    http_addr: :8082
+    grpc_addr: monitor:9090
+    grpc_timeout: 5s
+    log_level: info
