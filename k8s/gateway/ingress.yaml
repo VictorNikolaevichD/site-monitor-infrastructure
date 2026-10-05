@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway
+  namespace: site-monitor
+  labels:
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: site-monitor
+  annotations:
+    site-monitor/description: "Внешний HTTP-вход к gateway"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: site-monitor.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  name: http

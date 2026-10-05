@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/part-of: site-monitor
   annotations:
     site-monitor/description: "Читает события проверок из Kafka и отправляет их в Telegram"
+    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   selector:

@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/part-of: site-monitor
   annotations:
     site-monitor/description: "Проверки сайтов, REST и gRPC, запись в PostgreSQL, события в Kafka"
+    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   selector:

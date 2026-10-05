@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/part-of: site-monitor
   annotations:
     site-monitor/description: "Внешний REST, проксирует запросы в monitor по gRPC"
+    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   selector:
