@@ -1,5 +1,6 @@
 # site-monitor-infrastructure
 
+[![CD](https://github.com/VictorNikolaevichD/site-monitor-infrastructure/actions/workflows/cd.yaml/badge.svg)](https://github.com/VictorNikolaevichD/site-monitor-infrastructure/actions/workflows/cd.yaml)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)](#)
 [![Helm](https://img.shields.io/badge/Helm-0F1689?logo=helm&logoColor=white)](#)
 [![kind](https://img.shields.io/badge/kind-326CE5?logo=kubernetes&logoColor=white)](#)
@@ -69,3 +70,9 @@ kind/cluster.yaml            — кластер kind, порты 80 и 443
 k8s/                         — манифесты kubectl
 helm/monitor-service/        — chart
 ```
+
+---
+
+## Лицензия
+
+[MIT](LICENSE)
