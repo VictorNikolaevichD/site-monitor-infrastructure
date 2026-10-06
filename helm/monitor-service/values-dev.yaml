@@ -1,0 +1,15 @@
+monitor:
+  config:
+    logLevel: debug
+gateway:
+  config:
+    logLevel: debug
+  ingress:
+    enabled: true
+    host: site-monitor.local
+  hpa:
+    enabled: true
+    maxReplicas: 3
+notification:
+  config:
+    logLevel: debug

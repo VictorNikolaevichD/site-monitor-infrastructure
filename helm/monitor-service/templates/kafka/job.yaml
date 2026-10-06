@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-topics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitor-service.labels" (dict "component" "kafka-topics" "root" .) | nindent 4 }}
+spec:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        {{- include "monitor-service.labels" (dict "component" "kafka-topics" "root" .) | nindent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: kafka-topics
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kafka.image.tag }}"
+          imagePullPolicy: {{ .Values.kafka.image.pullPolicy }}
+          env:
+            - name: KAFKA_HEAP_OPTS
+              value: {{ .Values.kafka.topicsJob.heap | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              until /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server kafka:{{ .Values.kafka.ports.plaintext }}; do
+                echo "waiting for kafka"
+                sleep 2
+              done
+              /opt/kafka/bin/kafka-topics.sh \
+                --bootstrap-server kafka:{{ .Values.kafka.ports.plaintext }} \
+                --create --if-not-exists \
+                --topic {{ .Values.kafka.topics.events }} \
+                --partitions 1 \
+                --replication-factor 1
+              /opt/kafka/bin/kafka-topics.sh \
+                --bootstrap-server kafka:{{ .Values.kafka.ports.plaintext }} \
+                --create --if-not-exists \
+                --topic {{ .Values.kafka.topics.dlq }} \
+                --partitions 1 \
+                --replication-factor 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            {{- toYaml .Values.kafka.topicsJob.resources | nindent 12 }}

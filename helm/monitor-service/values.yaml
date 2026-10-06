@@ -1,0 +1,164 @@
+monitor:
+  replicaCount: 1
+  image:
+    repository: site-monitor
+    tag: dev
+    pullPolicy: IfNotPresent
+  ports:
+    http: 8080
+    grpc: 9090
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  config:
+    interval: 60s
+    httpAddr: ":8080"
+    grpcAddr: ":9090"
+    logLevel: info
+    httpTimeout: 10s
+    database:
+      maxConns: 10
+      minConns: 2
+      maxConnLifetime: 1h
+      maxConnIdleTime: 30m
+      connectTimeout: 5s
+      queryTimeout: 3s
+    kafka:
+      broker: kafka:9092
+      topic: site-check-events
+  databaseUrl: "postgres://monitor:monitor@postgres:5432/site_monitor_db?sslmode=disable"
+
+gateway:
+  replicaCount: 1
+  image:
+    repository: site-monitor-gateway
+    tag: dev
+    pullPolicy: IfNotPresent
+  port: 8082
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  config:
+    httpAddr: ":8082"
+    grpcAddr: monitor:9090
+    grpcTimeout: 5s
+    logLevel: info
+  ingress:
+    enabled: true
+    className: nginx
+    host: site-monitor.local
+    path: /
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    cpuUtilization: 50
+    memoryUtilization: 80
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 120
+      periodSeconds: 60
+
+notification:
+  replicaCount: 1
+  image:
+    repository: site-monitor-notification
+    tag: dev
+    pullPolicy: IfNotPresent
+  port: 8081
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  config:
+    kafkaBroker: kafka:9092
+    kafkaTopic: site-check-events
+    kafkaGroupId: notification-service
+    kafkaDlqTopic: site-check-events-dlq
+    httpAddr: ":8081"
+    logLevel: info
+    retryEnabled: "true"
+    retryMaxAttempts: "3"
+    retryInterval: 1s
+    retryMultiplier: "2"
+  telegram:
+    botToken: your-telegram-bot-token
+    chatId: "123123123123"
+
+postgres:
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 17-alpine
+    pullPolicy: IfNotPresent
+  port: 5432
+  auth:
+    user: monitor
+    password: monitor
+    database: site_monitor_db
+  storage: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+kafka:
+  replicaCount: 1
+  image:
+    repository: apache/kafka
+    tag: 4.2.0
+    pullPolicy: IfNotPresent
+  ports:
+    plaintext: 9092
+    controller: 9093
+  clusterId: MkU3OEVBNTcwNTJENDM2Qk
+  storage: 1Gi
+  heap: "-Xms256M -Xmx512M"
+  topics:
+    events: site-check-events
+    dlq: site-check-events-dlq
+  resources:
+    requests:
+      cpu: 200m
+      memory: 768Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  topicsJob:
+    heap: "-Xms64M -Xmx128M"
+    resources:
+      requests:
+        cpu: 50m
+        memory: 192Mi
+      limits:
+        cpu: 300m
+        memory: 384Mi
+
+migrate:
+  image:
+    repository: site-monitor-migrate
+    tag: dev
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi

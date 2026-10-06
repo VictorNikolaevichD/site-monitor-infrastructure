@@ -1,0 +1,29 @@
+monitor:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+gateway:
+  ingress:
+    enabled: true
+    host: site-monitor.example.com
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    cpuUtilization: 70
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+postgres:
+  storage: 10Gi
+kafka:
+  storage: 10Gi

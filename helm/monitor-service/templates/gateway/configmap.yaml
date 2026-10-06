@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitor-service.labels" (dict "component" "gateway" "root" .) | nindent 4 }}
+data:
+  gateway.yaml: |
+    http_addr: {{ .Values.gateway.config.httpAddr | quote }}
+    grpc_addr: {{ .Values.gateway.config.grpcAddr }}
+    grpc_timeout: {{ .Values.gateway.config.grpcTimeout }}
+    log_level: {{ .Values.gateway.config.logLevel }}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitor-service.labels" (dict "component" "notification" "root" .) | nindent 4 }}
+spec:
+  selector:
+    {{- include "monitor-service.selectorLabels" (dict "component" "notification") | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ .Values.notification.port }}
+      targetPort: http

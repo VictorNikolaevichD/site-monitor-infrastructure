@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitor-service.labels" (dict "component" "kafka" "root" .) | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    {{- include "monitor-service.selectorLabels" (dict "component" "kafka") | nindent 4 }}
+  ports:
+    - name: plaintext
+      port: {{ .Values.kafka.ports.plaintext }}
+      targetPort: plaintext
+    - name: controller
+      port: {{ .Values.kafka.ports.controller }}
+      targetPort: controller

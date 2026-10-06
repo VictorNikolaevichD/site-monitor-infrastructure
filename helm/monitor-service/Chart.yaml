@@ -1,0 +1,12 @@
+apiVersion: v2
+name: monitor-service
+description: Helm chart for the site-monitor stack
+type: application
+version: 0.1.0
+appVersion: "dev"
+keywords:
+  - site-monitor
+  - monitoring
+maintainers:
+  - name: VictorDokuchaev
+    email: victor.zip@yandex.ru

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitor-service.labels" (dict "component" "notification" "root" .) | nindent 4 }}
+  annotations:
+    site-monitor/description: "Читает события проверок из Kafka и отправляет их в Telegram"
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.notification.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "monitor-service.selectorLabels" (dict "component" "notification") | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        {{- include "monitor-service.labels" (dict "component" "notification" "root" .) | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 15
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: notification
+          image: "{{ .Values.notification.image.repository }}:{{ .Values.notification.image.tag }}"
+          imagePullPolicy: {{ .Values.notification.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.notification.port }}
+          envFrom:
+            - configMapRef:
+                name: notification
+            - secretRef:
+                name: notification
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            {{- toYaml .Values.notification.resources | nindent 12 }}

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitor-service.labels" (dict "component" "monitor" "root" .) | nindent 4 }}
+data:
+  config.yaml: |
+    interval: {{ .Values.monitor.config.interval }}
+    http_addr: {{ .Values.monitor.config.httpAddr | quote }}
+    grpc_addr: {{ .Values.monitor.config.grpcAddr | quote }}
+    log_level: {{ .Values.monitor.config.logLevel }}
+    http_timeout: {{ .Values.monitor.config.httpTimeout }}
+    database:
+      max_conns: {{ .Values.monitor.config.database.maxConns }}
+      min_conns: {{ .Values.monitor.config.database.minConns }}
+      max_conn_lifetime: {{ .Values.monitor.config.database.maxConnLifetime }}
+      max_conn_idle_time: {{ .Values.monitor.config.database.maxConnIdleTime }}
+      connect_timeout: {{ .Values.monitor.config.database.connectTimeout }}
+      query_timeout: {{ .Values.monitor.config.database.queryTimeout }}
+    kafka:
+      broker: {{ .Values.monitor.config.kafka.broker }}
+      topic: {{ .Values.monitor.config.kafka.topic }}

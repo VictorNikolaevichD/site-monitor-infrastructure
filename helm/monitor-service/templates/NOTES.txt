@@ -1,0 +1,15 @@
+Release {{ .Release.Name }} установлен в namespace {{ .Release.Namespace }}.
+
+{{- if .Values.gateway.ingress.enabled }}
+
+Сайт: http://{{ .Values.gateway.ingress.host }}/
+{{- else }}
+
+Ingress выключен. Gateway доступен только внутри кластера.
+{{- end }}
+
+Поды:
+  kubectl -n {{ .Release.Namespace }} get pods
+
+HPA gateway:
+  kubectl -n {{ .Release.Namespace }} get hpa gateway
