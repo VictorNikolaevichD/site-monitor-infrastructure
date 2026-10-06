@@ -29,6 +29,10 @@ coverage.*
 .env.*
 !.env.example
 
+# Секреты. В git только *.example.yaml и values-secrets.example.yaml
+k8s/**/secret.yaml
+helm/monitor-service/values-secrets.yaml
+
 # IDE
 .idea/
 .vscode/

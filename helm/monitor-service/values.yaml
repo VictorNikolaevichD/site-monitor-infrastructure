@@ -30,7 +30,7 @@ monitor:
     kafka:
       broker: kafka:9092
       topic: site-check-events
-  databaseUrl: "postgres://monitor:monitor@postgres:5432/site_monitor_db?sslmode=disable"
+  databaseUrl: "postgres://example-user:example-password@postgres:5432/site_monitor_db?sslmode=disable"
 
 gateway:
   replicaCount: 1
@@ -95,8 +95,8 @@ notification:
     retryInterval: 1s
     retryMultiplier: "2"
   telegram:
-    botToken: your-telegram-bot-token
-    chatId: "123123123123"
+    botToken: example-telegram-bot-token
+    chatId: "000000000"
 
 postgres:
   replicaCount: 1
@@ -106,8 +106,8 @@ postgres:
     pullPolicy: IfNotPresent
   port: 5432
   auth:
-    user: monitor
-    password: monitor
+    user: example-user
+    password: example-password
     database: site_monitor_db
   storage: 1Gi
   resources:
